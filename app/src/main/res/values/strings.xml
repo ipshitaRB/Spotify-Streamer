@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">MyMasterDetailTestApplication</string>
+    <string name="title_artist_detail">Artist Detail</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="search_artist_hint">Search artist</string>
+    <string name="no_result_found">No results found for</string>
+    <string name="no_result_found_suggestion">Please try different keywords or check spelling.</string>
+    <string name="title_activity_top_tracks">TopTracksActivity</string>
+    <string name="no_top_tracks">Can\'t load top tracks. Sorry.</string>
+    <string name="top_tracks_title">Top 10 tracks</string>
+    <string name="artist_parcel_key" translatable="false">artist key</string>
+    <string name="artist_name_key" translatable="false">artist name</string>
+    <string name="spotify_country_param" translatable = "false">country</string>
+    <string name="spotify_country_value" translatable = "false">US</string>
+    <string name="no_internet">Can\'t load search results. Check internet connection and try again.</string>
+    <string name="title_activity_music_play_acitvity">MusicPlayAcitvity</string>
+    <string name="tracklist_key">Track List Key</string>
+    <string name="track_position">track position</string>
+    <string name="seekbar_progress_position">seekbar progress</string>
+    <string name="player_broadcast">player broadcast</string>
+    <string name="player_broadcast_action">player broadcast action</string>
+    <string name="colon">:</string>
+    <string name="tracklist_parcel_key">tracklist parcel key</string>
+    <string name="action_show_now_playing">Now Playing</string>
+    <string name="top_track_parccel_key">top track parcel key</string>
+    <string name="track_number_key">track number key</string>
+    <string name="current_track_key">current track key</string>
+    <string name="view_key">view key</string>
+    <string name="no_song_currently_playing">No song currently playing</string>
+</resources>

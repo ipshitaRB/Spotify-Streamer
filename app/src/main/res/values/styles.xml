@@ -1,0 +1,53 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="single_line_list_item_text_style">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+        <item name="android:paddingLeft">@dimen/single_line_list_item_text_padding_left</item>
+        <item name="android:paddingRight">@dimen/single_line_item_text_right_padding</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/single_line_item_text_size</item>
+        <item name="android:singleLine">true</item>
+
+    </style>
+
+    <style name="two_line_list_item_primary_text_style">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
+        <item name="android:paddingLeft">@dimen/two_line_list_item_primary_text_padding_left</item>
+        <item name="android:paddingRight">@dimen/two_line_item_primary_text_right_padding</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">@dimen/two_line_list_item_primary_text_size</item>
+        <item name="android:singleLine">true</item>
+
+    </style>
+
+    <style name="two_line_list_item_secondary_text_style">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSecondary</item>
+        <item name="android:paddingLeft">@dimen/two_line_list_item_secondary_text_padding_left
+        </item>
+        <item name="android:paddingRight">@dimen/two_line_item_secondary_text_right_padding</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">@dimen/two_line_list_item_secondary_text_size</item>
+        <item name="android:singleLine">true</item>
+
+    </style>
+
+
+    <dimen name="two_line_list_item_secondary_text_size">14sp</dimen>
+    <dimen name="two_line_list_item_primary_text_size">16sp</dimen>
+    <dimen name="single_line_item_text_size">16sp</dimen>
+    <dimen name="two_line_list_item_primary_text_padding_left">16dp</dimen>
+    <dimen name="two_line_item_primary_text_right_padding">16dp</dimen>
+    <dimen name="two_line_list_item_secondary_text_padding_left">16dp</dimen>
+    <dimen name="two_line_item_secondary_text_right_padding">16dp</dimen>
+    <dimen name="single_line_list_item_text_padding_bottom">24dp</dimen>
+    <dimen name="two_line_item_primary_text_top_padding">20dp</dimen>
+    <dimen name="two_line_item_primary_text_bottom_padding">20dp</dimen>
+    <dimen name="two_line_item_secondary_text_bottom_padding">20dp</dimen>
+    <dimen name="two_line_item_secondary_text_top_padding">20dp</dimen>
+
+</resources>
