@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyMasterDetailTestApplication</string>
+    <string name="app_name">Spotify Streamer II</string>
     <string name="title_artist_detail">Artist Detail</string>
 
     <string name="hello_world">Hello world!</string>
@@ -29,4 +29,6 @@
     <string name="current_track_key">current track key</string>
     <string name="view_key">view key</string>
     <string name="no_song_currently_playing">No song currently playing</string>
+    <string name="external_url_key">spotify</string>
+    <string name="action_share">Share</string>
 </resources>

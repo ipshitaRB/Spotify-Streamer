@@ -21,6 +21,9 @@ public class Track implements Parcelable {
     // create String instance variable for previewURL
     private final String previewURL;
 
+    // create String instance variable for spotify external url
+    private final String spotifyExternalURL;
+
 
     // create private constructor using fields
     private Track(Builder builder) {
@@ -30,6 +33,7 @@ public class Track implements Parcelable {
         this.artistName = builder.artistName;
         this.previewURL = builder.previewURL;
 
+        this.spotifyExternalURL = builder.spotifyExternalURL;
     }
 
     protected Track(Parcel in) {
@@ -38,6 +42,7 @@ public class Track implements Parcelable {
         trackName = in.readString();
         artistName = in.readString();
         previewURL = in.readString();
+        spotifyExternalURL = in.readString();
     }
 
 
@@ -73,6 +78,10 @@ public class Track implements Parcelable {
         return artistName;
     }
 
+    public String getSpotifyExternalURL() {
+        return spotifyExternalURL;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -85,6 +94,7 @@ public class Track implements Parcelable {
         dest.writeString(trackName);
         dest.writeString(artistName);
         dest.writeString(previewURL);
+        dest.writeString(spotifyExternalURL);
     }
 
 
@@ -95,6 +105,7 @@ public class Track implements Parcelable {
         private String trackName;
         private String artistName;
         private String previewURL;
+        private String spotifyExternalURL;
 
 
         // builder methods for setting property
@@ -120,6 +131,11 @@ public class Track implements Parcelable {
 
         public Builder previewURL(String previewURL) {
             this.previewURL = previewURL;
+            return this;
+        }
+
+        public Builder spotifyExternalURL(String spotifyExternalURL){
+            this.spotifyExternalURL = spotifyExternalURL;
             return this;
         }
 

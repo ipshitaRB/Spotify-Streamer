@@ -1,10 +1,21 @@
 package com.example.ipshita.mymasterdetailtestapplication;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.example.ipshita.mymasterdetailtestapplication.Util.ServiceUtil;
 import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
+import com.example.ipshita.mymasterdetailtestapplication.models.Track;
+
+import java.util.ArrayList;
 
 
 /**
@@ -23,9 +34,13 @@ import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
  * {@link ArtistListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class ArtistListActivity extends FragmentActivity
-        implements ArtistListFragment.Callbacks {
+public class ArtistListActivity extends AppCompatActivity
+        implements ArtistListFragment.Callbacks, ArtistDetailFragment.TopTrackCallback, MusicPlayDialogFragment.iMusicPlayDialogListener {
 
+    FragmentManager fm = getSupportFragmentManager();
+    MusicPlayDialogFragment dialog;
+
+    MenuItem nowPlayingMenuItem;
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -36,6 +51,12 @@ public class ArtistListActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_list);
+        Intent intent = getIntent();
+        ActionBar ab = getSupportActionBar();
+
+            ab.setTitle(getString(R.string.top_tracks_title));
+
+
 
         if (findViewById(R.id.artist_detail_container) != null) {
             // The detail container view will be present only in the
@@ -48,6 +69,7 @@ public class ArtistListActivity extends FragmentActivity
             // 'activated' state when touched.
 
             // TODO this may not be required
+
             /*((ArtistListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.artist_list))
                     .setActivateOnItemClick(true);*/
@@ -67,7 +89,7 @@ public class ArtistListActivity extends FragmentActivity
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putParcelable(ArtistDetailFragment.ARG_ITEM_ID, artist);
+            arguments.putParcelable(ArtistDetailFragment.ARTIST_ID, artist);
             ArtistDetailFragment fragment = new ArtistDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -78,8 +100,107 @@ public class ArtistListActivity extends FragmentActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, ArtistDetailActivity.class);
-            detailIntent.putExtra(ArtistDetailFragment.ARG_ITEM_ID, artist);
+            detailIntent.putExtra(ArtistDetailFragment.ARTIST_ID, artist);
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public void onTopTrackSelected(ArrayList<Track> trackList, int trackPosition) {
+        if (mTwoPane) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            /*Bundle arguments = new Bundle();
+            arguments.putParcelable(ArtistDetailFragment.ARTIST_ID, artist);
+            ArtistDetailFragment fragment = new ArtistDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.artist_detail_container, fragment)
+                    .commit();*/
+
+
+            dialog = MusicPlayDialogFragment.newInstance(trackList, trackPosition);
+            dialog.show(fm, "fragment_music_play");
+
+
+        } else {
+            // In single-pane mode, simply start the detail activity
+            // for the selected item ID.
+            Intent detailIntent = new Intent(this, MusicPlayAcitvity.class);
+            detailIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), trackList);
+            detailIntent.putExtra(getString(R.string.track_position),trackPosition);
+            startActivity(detailIntent);
+        }
+    }
+
+
+    @Override
+    public void onTrackCompleted() {
+        nowPlayingMenuItem.setVisible(false);
+        dialog.dismiss();
+    }
+
+    @Override
+    public void onTrackStarted() {
+       nowPlayingMenuItem.setVisible(true);
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
+        nowPlayingMenuItem = menu.findItem(R.id.action_now_playing);
+        if (ServiceUtil.isServiceRunning(MusicPlayerService.class, this))
+            nowPlayingMenuItem.setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.action_now_playing:
+                if (ServiceUtil.isServiceRunning(MusicPlayerService.class,this) ){
+                    if (mTwoPane) {
+                        // In two-pane mode, show the detail view in this activity by
+                        // adding or replacing the detail fragment using a
+                        // fragment transaction.
+            /*Bundle arguments = new Bundle();
+            arguments.putParcelable(ArtistDetailFragment.ARTIST_ID, artist);
+            ArtistDetailFragment fragment = new ArtistDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.artist_detail_container, fragment)
+                    .commit();*/
+
+
+                       if (null!= dialog)
+                        dialog.show(fm, "fragment_music_play");
+
+
+                    } else {
+                        // In single-pane mode, simply start the detail activity
+                        // for the selected item ID.
+                        Intent detailIntent = new Intent(this, MusicPlayAcitvity.class);/*
+                        detailIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), trackList);
+                        detailIntent.putExtra(getString(R.string.track_position),trackPosition);*/
+                        startActivity(detailIntent);
+                    }
+                }
+
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

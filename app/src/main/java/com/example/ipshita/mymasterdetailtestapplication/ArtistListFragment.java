@@ -2,10 +2,9 @@ package com.example.ipshita.mymasterdetailtestapplication;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -250,6 +249,7 @@ public class ArtistListFragment extends Fragment {
                 topTracksIntent.putExtra(getString(R.string.artist_name_key), artistName);
                 startActivity(topTracksIntent);*/
                 // TODO send artist object to activity
+                mCallbacks.onItemSelected(artistAdapter.getItem(position));
 
             }
         });

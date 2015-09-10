@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import com.example.ipshita.mymasterdetailtestapplication.models.Track;
+
+import java.util.ArrayList;
+
 /**
  * An activity representing a single Artist detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
@@ -15,7 +19,7 @@ import android.view.MenuItem;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link ArtistDetailFragment}.
  */
-public class ArtistDetailActivity extends AppCompatActivity {
+public class ArtistDetailActivity extends AppCompatActivity implements ArtistDetailFragment.TopTrackCallback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(ArtistDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(ArtistDetailFragment.ARG_ITEM_ID));
+            arguments.putString(ArtistDetailFragment.ARTIST_ID,
+                    getIntent().getStringExtra(ArtistDetailFragment.ARTIST_ID));
             ArtistDetailFragment fragment = new ArtistDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -63,5 +67,13 @@ public class ArtistDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTopTrackSelected(ArrayList<Track> trackList, int trackPosition) {
+        Intent detailIntent = new Intent(this, MusicPlayAcitvity.class);
+        detailIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), trackList);
+        detailIntent.putExtra(getString(R.string.track_position),trackPosition);
+        startActivity(detailIntent);
     }
 }
