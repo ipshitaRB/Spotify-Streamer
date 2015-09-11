@@ -1,11 +1,13 @@
 package com.example.ipshita.mymasterdetailtestapplication;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
 import com.example.ipshita.mymasterdetailtestapplication.models.Track;
 
 import java.util.ArrayList;
@@ -26,9 +28,17 @@ public class ArtistDetailActivity extends AppCompatActivity implements ArtistDet
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_detail);
 
+
         // Show the Up button in the action bar.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Intent intent = getIntent();
+        ActionBar ab = getSupportActionBar();
+        Artist currentArtist = intent.getParcelableExtra(ArtistDetailFragment.ARTIST_ID);
+        if(currentArtist != null){
+            ab.setTitle(getString(R.string.top_tracks_title));
+            ab.setSubtitle(currentArtist.getArtistName());
 
+        }
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).

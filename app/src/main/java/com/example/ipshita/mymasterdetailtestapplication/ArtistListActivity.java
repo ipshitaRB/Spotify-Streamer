@@ -3,14 +3,18 @@ package com.example.ipshita.mymasterdetailtestapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
+import com.example.ipshita.mymasterdetailtestapplication.Util.MusicStartListener;
 import com.example.ipshita.mymasterdetailtestapplication.Util.ServiceUtil;
 import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
 import com.example.ipshita.mymasterdetailtestapplication.models.Track;
@@ -35,7 +39,7 @@ import java.util.ArrayList;
  * to listen for item selections.
  */
 public class ArtistListActivity extends AppCompatActivity
-        implements ArtistListFragment.Callbacks, ArtistDetailFragment.TopTrackCallback, MusicPlayDialogFragment.iMusicPlayDialogListener {
+        implements ArtistListFragment.Callbacks, ArtistDetailFragment.TopTrackCallback, MusicStartListener, MusicPlayerService.MusicEndListener {
 
     FragmentManager fm = getSupportFragmentManager();
     MusicPlayDialogFragment dialog;
@@ -46,6 +50,10 @@ public class ArtistListActivity extends AppCompatActivity
      * device.
      */
     private boolean mTwoPane;
+    private MenuItem shareExternalURLItem;
+    private String spotifyExternalURL;
+    private ShareActionProvider mShareActionProvider;
+    private MenuItem lockscreenItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +62,7 @@ public class ArtistListActivity extends AppCompatActivity
         Intent intent = getIntent();
         ActionBar ab = getSupportActionBar();
 
-            ab.setTitle(getString(R.string.top_tracks_title));
+            ab.setTitle(getString(R.string.app_name));
 
 
 
@@ -137,14 +145,20 @@ public class ArtistListActivity extends AppCompatActivity
 
     @Override
     public void onTrackCompleted() {
+        // TODO track completed when there is no dialog fragment
         nowPlayingMenuItem.setVisible(false);
+        shareExternalURLItem.setVisible(false);
         dialog.dismiss();
+        this.spotifyExternalURL = "";
+
     }
 
     @Override
-    public void onTrackStarted() {
+    public void onTrackStarted(String spotifyExternalURL) {
        nowPlayingMenuItem.setVisible(true);
-
+        shareExternalURLItem.setVisible(true);
+        this.spotifyExternalURL = spotifyExternalURL;
+        MusicPlayerService.registerOnMusicEndListener(this);
 
     }
 
@@ -153,8 +167,15 @@ public class ArtistListActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
         nowPlayingMenuItem = menu.findItem(R.id.action_now_playing);
-        if (ServiceUtil.isServiceRunning(MusicPlayerService.class, this))
-            nowPlayingMenuItem.setVisible(true);
+        shareExternalURLItem =  menu.findItem(R.id.action_share);
+
+        mShareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(shareExternalURLItem);
+        mShareActionProvider.setShareIntent(getShareIntent());
+        if (ServiceUtil.isServiceRunning(MusicPlayerService.class, this)) {
+            nowPlayingMenuItem.setVisible(false);
+            shareExternalURLItem.setVisible(false);
+        }
         return true;
     }
 
@@ -169,6 +190,12 @@ public class ArtistListActivity extends AppCompatActivity
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            case R.id.action_settings:
+                Intent settingsActivityIntent = new Intent(getApplicationContext(),SettingsActivity.class);
+                startActivity(settingsActivityIntent);
+                return true;
+
+
             case R.id.action_now_playing:
                 if (ServiceUtil.isServiceRunning(MusicPlayerService.class,this) ){
                     if (mTwoPane) {
@@ -200,7 +227,31 @@ public class ArtistListActivity extends AppCompatActivity
 
                 return true;
 
+
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /** Defines a default (dummy) share intent to initialize the action provider.
+     * However, as soon as the actual content to be used in the intent
+     * is known or changes, you must update the share intent by again calling
+     * mShareActionProvider.setShareIntent()
+     */
+    private Intent getShareIntent() {
+        Intent mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mShareIntent.setType("text/plain");
+        mShareIntent.putExtra(Intent.EXTRA_TEXT, spotifyExternalURL);
+        return mShareIntent;
+    }
+
+    @Override
+    public void onMusicEnd() {
+        nowPlayingMenuItem.setVisible(false);
+        shareExternalURLItem.setVisible(false);
+        dialog.dismiss();
+        this.spotifyExternalURL = "";
+        MusicPlayerService.unRegisterOnMusicEndListener();
     }
 }

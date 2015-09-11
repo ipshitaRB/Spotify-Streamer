@@ -30,5 +30,15 @@
     <string name="view_key">view key</string>
     <string name="no_song_currently_playing">No song currently playing</string>
     <string name="external_url_key">spotify</string>
-    <string name="action_share">Share</string>
+    <string name="action_share">Share Current Track</string>
+    <string name="preference_country_title">Select country</string>
+    <string name="preference_country_key">country key</string>
+    <string name="pref_default_country">US</string>
+    <string name="notification">Lock Screen Playback Controls</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="preference_lockscreen_key">lockscreen key</string>
+    <string name="lockscreen_title">Lockscreen Playback Controls</string>
+    <string name="is_playing_key">is playing</string>
+    <string name="track_duration">track duration</string>
 </resources>

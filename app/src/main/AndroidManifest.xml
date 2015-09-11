@@ -34,13 +34,13 @@
         </activity>
         <activity
             android:name=".MusicPlayAcitvity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_music_play_acitvity"
             android:parentActivityName=".ArtistDetailActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ipshita.mymasterdetailtestapplication.ArtistDetailActivity" />
         </activity>
+        <activity android:name=".SettingsActivity"/>
 
         <service
             android:name=".MusicPlayerService"

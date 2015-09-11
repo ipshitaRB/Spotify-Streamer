@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ipshita.mymasterdetailtestapplication.Util.MusicStartListener;
 import com.example.ipshita.mymasterdetailtestapplication.models.Track;
 import com.squareup.picasso.Picasso;
 
@@ -55,30 +56,28 @@ public class MusicPlayDialogFragment extends DialogFragment implements MusicPlay
 
     }
 
-    public interface iMusicPlayDialogListener{
-        public void onTrackCompleted();
-        public void onTrackStarted();
-    }
 
-    private static iMusicPlayDialogListener dummyListener = new iMusicPlayDialogListener() {
+    private static MusicStartListener dummyListener = new MusicStartListener() {
         @Override
         public void onTrackCompleted() {
 
         }
 
         @Override
-        public void onTrackStarted() {
+        public void onTrackStarted(String spotifyExternalURL) {
 
         }
+
+
     };
 
-    private iMusicPlayDialogListener musicCompletedListener = dummyListener;
+    private MusicStartListener musicCompletedListener = dummyListener;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof iMusicPlayDialogListener){
-            musicCompletedListener = (iMusicPlayDialogListener) activity;
+        if (activity instanceof MusicStartListener){
+            musicCompletedListener = (MusicStartListener) activity;
         }
     }
 
@@ -354,7 +353,7 @@ public class MusicPlayDialogFragment extends DialogFragment implements MusicPlay
     public void onMusicStarted() {
         isPlaying = true;
         playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
-        musicCompletedListener.onTrackStarted();
+        musicCompletedListener.onTrackStarted(currentTrack.getSpotifyExternalURL());
         new UpdateSeekBarTask().execute();
 
     }

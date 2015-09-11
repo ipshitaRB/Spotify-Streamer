@@ -1,5 +1,6 @@
 package com.example.ipshita.mymasterdetailtestapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,13 +54,53 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         MusicPlayerService.registerOnNotificationEventListener(this);
 
     }
+    public interface iMusicPlayDialogListener{
+        public void onTrackCompleted();
+        public void onTrackStarted(String spotifyExternalURL);
+    }
 
+    private static iMusicPlayDialogListener dummyListener = new iMusicPlayDialogListener() {
+        @Override
+        public void onTrackCompleted() {
+
+        }
+
+        @Override
+        public void onTrackStarted(String spotifyExternalURL) {
+
+        }
+
+
+    };
+
+    private iMusicPlayDialogListener musicCompletedListener = dummyListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof iMusicPlayDialogListener){
+            musicCompletedListener = (iMusicPlayDialogListener) activity;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        musicCompletedListener = dummyListener;
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(getString(R.string.tracklist_parcel_key), (ArrayList<? extends Parcelable>) trackList);
         outState.putInt(getString(R.string.track_number_key), currentTrackPosition);
         outState.putParcelable(getString(R.string.current_track_key), currentTrack);
+        // ispaused
+        // seekbarposition
+        // elapsed time
+        // total duration
+        outState.putBoolean(getString(R.string.is_playing_key), isPlaying);
+        outState.putInt(getString(R.string.seekbar_progress_position), trackTimePosition);
+        outState.putInt(getString(R.string.track_duration),trackDuration);
 
         super.onSaveInstanceState(outState);
     }
@@ -227,7 +268,16 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
                 trackList = savedInstanceState.getParcelableArrayList(getString(R.string.tracklist_parcel_key));
                 currentTrackPosition = savedInstanceState.getInt(getString(R.string.track_number_key), -1);
                 currentTrack = savedInstanceState.getParcelable(getString(R.string.current_track_key));
+                trackDuration = savedInstanceState.getInt(getString(R.string.track_duration));
+                seekBar.setProgress(savedInstanceState.getInt(getString(R.string.seekbar_progress_position)));
+                elapsedTimeTextView.setText(getDurationInMinutes(seekBar.getProgress()));
+                totalDurationTextView.setText(getDurationInMinutes(trackDuration));
+                isPlaying = savedInstanceState.getBoolean(getString(R.string.is_playing_key));
+                Intent startServiceIntent = new Intent(getActivity(), MusicPlayerService.class);
+                // set action play
+                startServiceIntent.setAction(MusicPlayerService.ACTION_FRAGMENT_RESUMED);
 
+                getActivity().startService(startServiceIntent);
 
             }
             if (null != trackList && trackList.size() > 0) {
@@ -278,8 +328,10 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         int durationInSeconds = duration / MILISECONDS_IN_ONE_SECOND;
         int minutes = durationInSeconds / SECONDS_IN_ONE_MINUTE;
         int seconds = durationInSeconds % SECONDS_IN_ONE_MINUTE;
-        String time = String.valueOf(minutes) + getString(R.string.colon) + String.valueOf(seconds);
-        return time;
+        if (isAdded()) {
+            return String.valueOf(minutes) + getString(R.string.colon) + String.valueOf(seconds);
+        }else
+            return "";
     }
 
     @Override
@@ -314,6 +366,7 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         isPlaying = true;
         playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
         new UpdateSeekBarTask().execute();
+        musicCompletedListener.onTrackStarted(currentTrack.getSpotifyExternalURL());
 
     }
 
@@ -339,6 +392,7 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         playPauseButton.setImageResource(android.R.drawable.ic_media_play);
         trackTimePosition = trackDuration;
         setCurrentTrackTimePosition(trackTimePosition);
+        musicCompletedListener.onTrackCompleted();
     }
 
     @Override

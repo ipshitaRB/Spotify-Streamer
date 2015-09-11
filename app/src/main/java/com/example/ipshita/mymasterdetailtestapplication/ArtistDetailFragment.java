@@ -2,9 +2,11 @@ package com.example.ipshita.mymasterdetailtestapplication;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -208,7 +210,9 @@ public class ArtistDetailFragment extends Fragment {
                 options.put(getString(R.string.spotify_country_param), getString(R.string.spotify_country_value));
                 try {
                     // TODO get value from menu
-                    spotifyTopTrackList = spotifyService.getArtistTopTrack(params[0], "US");
+                    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String countryCode = sharedPrefs.getString(getString(R.string.preference_country_key), getString(R.string.pref_default_country));
+                    spotifyTopTrackList = spotifyService.getArtistTopTrack(params[0], countryCode);
                     if (null != spotifyTopTrackList.tracks && !spotifyTopTrackList.tracks.isEmpty()) {
                         int size = spotifyTopTrackList.tracks.size() > MAX_TOP_TRACKS_LIMIT ? MAX_TOP_TRACKS_LIMIT : spotifyTopTrackList.tracks.size();
                         String albumName;
