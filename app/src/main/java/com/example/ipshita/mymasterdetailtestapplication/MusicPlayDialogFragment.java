@@ -318,8 +318,10 @@ public class MusicPlayDialogFragment extends DialogFragment implements MusicPlay
         int durationInSeconds = duration / MILISECONDS_IN_ONE_SECOND;
         int minutes = durationInSeconds / SECONDS_IN_ONE_MINUTE;
         int seconds = durationInSeconds % SECONDS_IN_ONE_MINUTE;
-        String time = String.valueOf(minutes) + getString(R.string.colon) + String.valueOf(seconds);
-        return time;
+        if (isAdded())
+        return String.valueOf(minutes) + getString(R.string.colon) + String.valueOf(seconds);
+        else
+            return "";
     }
 
     @Override

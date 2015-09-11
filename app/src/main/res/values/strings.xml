@@ -41,4 +41,5 @@
     <string name="lockscreen_title">Lockscreen Playback Controls</string>
     <string name="is_playing_key">is playing</string>
     <string name="track_duration">track duration</string>
+    <string name="action_now_playing">action now playing</string>
 </resources>

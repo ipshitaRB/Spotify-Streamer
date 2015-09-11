@@ -1,7 +1,10 @@
 package com.example.ipshita.mymasterdetailtestapplication;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -54,11 +57,27 @@ public class ArtistListActivity extends AppCompatActivity
     private String spotifyExternalURL;
     private ShareActionProvider mShareActionProvider;
     private MenuItem lockscreenItem;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_list);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(getString(R.string.action_now_playing));
+        filter.addAction("SOME_OTHER_ACTION");
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //do something based on the intent's action
+                if (intent.getAction().equals(getString(R.string.action_now_playing))){
+
+                    registerMusicListener(intent);
+                }
+            }
+        };
+        registerReceiver(receiver, filter);
         Intent intent = getIntent();
         ActionBar ab = getSupportActionBar();
 
@@ -84,6 +103,16 @@ public class ArtistListActivity extends AppCompatActivity
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
+    }
+
+    private void registerMusicListener(Intent intent) {
+        MusicPlayerService.registerOnMusicEndListener(this);
+        this.spotifyExternalURL = intent.getStringExtra(getString(R.string.external_url_key));
+        nowPlayingMenuItem.setVisible(true);
+        shareExternalURLItem.setVisible(true);
+
+        mShareActionProvider.setShareIntent(setShareIntent());
+
     }
 
     /**
@@ -137,8 +166,9 @@ public class ArtistListActivity extends AppCompatActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, MusicPlayAcitvity.class);
             detailIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), trackList);
-            detailIntent.putExtra(getString(R.string.track_position),trackPosition);
+            detailIntent.putExtra(getString(R.string.track_position), trackPosition);
             startActivity(detailIntent);
+
         }
     }
 
@@ -151,6 +181,9 @@ public class ArtistListActivity extends AppCompatActivity
         dialog.dismiss();
         this.spotifyExternalURL = "";
 
+        mShareActionProvider.setShareIntent(setShareIntent());
+
+
     }
 
     @Override
@@ -158,8 +191,17 @@ public class ArtistListActivity extends AppCompatActivity
        nowPlayingMenuItem.setVisible(true);
         shareExternalURLItem.setVisible(true);
         this.spotifyExternalURL = spotifyExternalURL;
+        mShareActionProvider.setShareIntent(setShareIntent());
         MusicPlayerService.registerOnMusicEndListener(this);
 
+    }
+
+    private Intent setShareIntent() {
+        Intent mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mShareIntent.setType("text/plain");
+        mShareIntent.putExtra(Intent.EXTRA_TEXT, spotifyExternalURL);
+        return mShareIntent;
     }
 
     @Override
@@ -250,8 +292,20 @@ public class ArtistListActivity extends AppCompatActivity
     public void onMusicEnd() {
         nowPlayingMenuItem.setVisible(false);
         shareExternalURLItem.setVisible(false);
+        if (null!=dialog)
         dialog.dismiss();
         this.spotifyExternalURL = "";
+
+        mShareActionProvider.setShareIntent(setShareIntent());
         MusicPlayerService.unRegisterOnMusicEndListener();
+    }
+
+    @Override
+    public void onMusicStarted(String spotifyExternalURL) {
+        nowPlayingMenuItem.setVisible(true);
+        shareExternalURLItem.setVisible(true);
+        this.spotifyExternalURL = "";
+
+        mShareActionProvider.setShareIntent(setShareIntent());
     }
 }

@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ipshita.mymasterdetailtestapplication.Util.MusicStartListener;
 import com.example.ipshita.mymasterdetailtestapplication.models.Track;
 import com.squareup.picasso.Picasso;
 
@@ -54,7 +55,7 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         MusicPlayerService.registerOnNotificationEventListener(this);
 
     }
-    public interface iMusicPlayDialogListener{
+/*    public interface iMusicPlayDialogListener{
         public void onTrackCompleted();
         public void onTrackStarted(String spotifyExternalURL);
     }
@@ -73,19 +74,43 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
 
     };
 
-    private iMusicPlayDialogListener musicCompletedListener = dummyListener;
+    private iMusicPlayDialogListener musicCompletedListener = dummyListener;*/
 
-    @Override
+
+    private static MusicStartListener dummyListener = new MusicStartListener() {
+        @Override
+        public void onTrackCompleted() {
+
+        }
+
+        @Override
+        public void onTrackStarted(String spotifyExternalURL) {
+
+        }
+
+
+    };
+
+    private static MusicStartListener musicCompletedListener = dummyListener;
+   /* @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof iMusicPlayDialogListener){
-            musicCompletedListener = (iMusicPlayDialogListener) activity;
+        if (activity instanceof MusicStartListener){
+            musicCompletedListener = (MusicStartListener) activity;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        musicCompletedListener = dummyListener;
+    }*/
+
+    public static void registerMusicStartListener(MusicStartListener listener){
+        musicCompletedListener = listener;
+    }
+
+    public static void unregisterMusicStartListener(){
         musicCompletedListener = dummyListener;
     }
 

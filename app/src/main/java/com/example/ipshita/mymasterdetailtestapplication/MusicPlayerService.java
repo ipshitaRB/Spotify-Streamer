@@ -92,6 +92,11 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         public void onMusicEnd() {
 
         }
+
+        @Override
+        public void onMusicStarted(String spotifyExternalURL) {
+
+        }
     };
 
     private static MusicEndListener iMusicEndListener = dummyMusicEndListener;
@@ -121,6 +126,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public static void registerOnMusicEndListener(MusicEndListener listener) {
         iMusicEndListener = listener;
+
     }
 
     public static void unRegisterOnMusicEndListener(){
@@ -129,11 +135,9 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public interface MusicEndListener{
         public void onMusicEnd();
+        public void onMusicStarted(String spotifyExternalURL);
     }
-    public interface MusicPlayDialogListener {
-        public void onTrackCompleted();
-        public void onTrackStarted(String spotifyExternalURL);
-    }
+
 
 
     public static void registerOnNotificationEventListener(OnNotificationEventListener onNotificationEventListener) {
@@ -369,7 +373,10 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
         mediaPlayer.seekTo(seekbarPosition);
         mediaPlayer.start();
-
+        Intent intent = new Intent();
+        intent.setAction(getString(R.string.action_now_playing));
+        intent.putExtra(getString(R.string.external_url_key),currentTrack.getSpotifyExternalURL());
+        sendBroadcast(intent);
         if (null != listener) {
             listener.getDuration(mediaPlayer.getDuration());
             listener.onMusicStarted();
@@ -389,10 +396,12 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
             }
         });
 
+
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        iMusicEndListener.onMusicEnd();
         if (null != listener)
             listener.onTrackCompleted();
         if (null != mediaPlayer)
