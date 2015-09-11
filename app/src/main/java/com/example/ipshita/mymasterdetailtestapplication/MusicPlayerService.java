@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import kaaes.spotify.webapi.android.SpotifyService;
 
 public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
+
 
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PLAY_PAUSE = "com.example.action.PLAY_PAUSE";
@@ -118,6 +121,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     private NotificationManager nManager;
     private boolean isPaused = false;
     private int seekbarPosition;
+    private BroadcastReceiver receiver;
 
     public MusicPlayerService() {
 
@@ -142,6 +146,29 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public static void registerOnNotificationEventListener(OnNotificationEventListener onNotificationEventListener) {
         listener = onNotificationEventListener;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //do something based on the intent's action
+                if (intent.getAction().equals(getString(R.string.action_lockscreen))){
+
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                    if (preferences.getBoolean(getString(R.string.preference_lockscreen_key), true)) {
+                        notificationLockScreenVisibility = Notification.VISIBILITY_PUBLIC;
+                    } else {
+                        notificationLockScreenVisibility = Notification.VISIBILITY_PRIVATE;
+                    }
+                    builder.setVisibility(notificationLockScreenVisibility);
+                    nManager.notify(NOTIFICATION_ID, notification);
+                }
+            }
+        };
     }
 
     @Override
@@ -375,7 +402,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.start();
         Intent intent = new Intent();
         intent.setAction(getString(R.string.action_now_playing));
-        intent.putExtra(getString(R.string.external_url_key),currentTrack.getSpotifyExternalURL());
+        intent.putExtra(getString(R.string.external_url_key), currentTrack.getSpotifyExternalURL());
         sendBroadcast(intent);
         if (null != listener) {
             listener.getDuration(mediaPlayer.getDuration());

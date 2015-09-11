@@ -1,5 +1,6 @@
 package com.example.ipshita.mymasterdetailtestapplication;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -41,9 +42,13 @@ public class SettingsActivity extends PreferenceActivity
 
 
                     SharedPreferences.Editor e = mPrefs.edit();
-                    e.putBoolean("data_traffic", isLockscreenControlON);
+                    e.putBoolean(getString(R.string.preference_lockscreen_key), isLockscreenControlON);
                     e.commit();
 
+                    Intent intent = new Intent();
+                    intent.setAction(getString(R.string.action_lockscreen));
+
+                    sendBroadcast(intent);
 
 
                     return true;
