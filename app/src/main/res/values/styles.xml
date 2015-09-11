@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
+
     <style name="single_line_list_item_text_style">
         <item name="android:textAppearance">?android:attr/textAppearanceListItem</item>
         <item name="android:paddingLeft">@dimen/single_line_list_item_text_padding_left</item>

@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.example.ipshita.mymasterdetailtestapplication.Util.NetworkUtil;
 import com.example.ipshita.mymasterdetailtestapplication.adapters.ArtistAdapter;
-import com.example.ipshita.mymasterdetailtestapplication.dummy.DummyContent;
 import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
 
 import java.util.ArrayList;
@@ -39,48 +38,11 @@ import retrofit.RetrofitError;
  */
 public class ArtistListFragment extends Fragment {
 
-    // Declare List of artists
-    public ArrayList<Artist> artistList;
-
-    // Declare custom Adapter for Artist results
-    public ArtistAdapter artistAdapter;
-    String searchKeyword;
-    // Declare SpotifyApi object
-    private SpotifyApi spotifyApi;
-    // Declare SpotifyService object
-    private SpotifyService spotifyService;
-
-
-
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(Artist artist);
-    }
-
     /**
      * A dummy implementation of the {@link Callbacks} interface that does
      * nothing. Used only when this fragment is not attached to an activity.
@@ -90,8 +52,24 @@ public class ArtistListFragment extends Fragment {
         public void onItemSelected(Artist artist) {
         }
     };
-
-
+    // Declare List of artists
+    public ArrayList<Artist> artistList;
+    // Declare custom Adapter for Artist results
+    public ArtistAdapter artistAdapter;
+    String searchKeyword;
+    // Declare SpotifyApi object
+    private SpotifyApi spotifyApi;
+    // Declare SpotifyService object
+    private SpotifyService spotifyService;
+    /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private Callbacks mCallbacks = sDummyCallbacks;
+    /**
+     * The current activated item position. Only used on tablets.
+     */
+    private int mActivatedPosition = ListView.INVALID_POSITION;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -110,17 +88,24 @@ public class ArtistListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-       /* setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));*/
+
         if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.artist_parcel_key))) {
             artistList.clear();
         } else {
             artistList = savedInstanceState.getParcelableArrayList(getString(R.string.artist_parcel_key));
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Activities containing this fragment must implement its callbacks.
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+        }
+
+        mCallbacks = (Callbacks) activity;
     }
 
    /* @Override
@@ -135,23 +120,21 @@ public class ArtistListFragment extends Fragment {
     }*/
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        mCallbacks = (Callbacks) activity;
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
         mCallbacks = sDummyCallbacks;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(getString(R.string.artist_parcel_key), artistList);
+        if (mActivatedPosition != ListView.INVALID_POSITION) {
+            // Serialize and persist the activated item position.
+            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+        }
     }
 
   /*  @Override
@@ -164,17 +147,7 @@ public class ArtistListFragment extends Fragment {
     }
 */
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(getString(R.string.artist_parcel_key), artistList);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-        }
-    }
-
-   /* *//**
+    /**
      * Turns on activate-on-click mode. When this mode is on, list items will be
      * given the 'activated' state when touched.
      *//*
@@ -195,7 +168,6 @@ public class ArtistListFragment extends Fragment {
 
         mActivatedPosition = position;
     }*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //declare and initialize rootview
@@ -229,7 +201,7 @@ public class ArtistListFragment extends Fragment {
 
         // initialize custom adapter with the list of artists
 
-        artistAdapter = new ArtistAdapter(getActivity(),artistList);
+        artistAdapter = new ArtistAdapter(getActivity(), artistList);
 
         // initialize artist list view
         ListView artistListView = (ListView) rootView.findViewById(R.id.artist_listview);
@@ -241,20 +213,27 @@ public class ArtistListFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //start top ten track activity and pass artist id (to query spotify service for top tracks )and artist name(to show in the action bar)
-                /*String artistId = artistAdapter.getItem(position).getArtistId();
-                String artistName = artistAdapter.getItem(position).getArtistName();
-                Intent topTracksIntent = new Intent(getActivity(), TopTracksActivity.class);
-                topTracksIntent.putExtra(Intent.EXTRA_TEXT, artistId);
-                topTracksIntent.putExtra(getString(R.string.artist_name_key), artistName);
-                startActivity(topTracksIntent);*/
-                // TODO send artist object to activity
+
                 mCallbacks.onItemSelected(artistAdapter.getItem(position));
 
             }
         });
 
         return rootView;
+    }
+
+   /* */
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onItemSelected(Artist artist);
     }
 
     /**

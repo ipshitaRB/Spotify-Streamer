@@ -133,16 +133,9 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     }
 
-    public static void unRegisterOnMusicEndListener(){
+    public static void unRegisterOnMusicEndListener() {
         iMusicEndListener = dummyMusicEndListener;
     }
-
-    public interface MusicEndListener{
-        public void onMusicEnd();
-        public void onMusicStarted(String spotifyExternalURL);
-    }
-
-
 
     public static void registerOnNotificationEventListener(OnNotificationEventListener onNotificationEventListener) {
         listener = onNotificationEventListener;
@@ -155,7 +148,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
             @Override
             public void onReceive(Context context, Intent intent) {
                 //do something based on the intent's action
-                if (intent.getAction().equals(getString(R.string.action_lockscreen))){
+                if (intent.getAction().equals(getString(R.string.action_lockscreen))) {
 
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -198,10 +191,6 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
                 nextIntent, 0);
 
         if (intent != null && intent.getAction() != null) {
-
-
-
-
 
 
             // check intent action
@@ -258,7 +247,6 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
                         } else {
                             notificationLockScreenVisibility = Notification.VISIBILITY_PRIVATE;
                         }
-                        // TODO check visibility from shared preference;
 
                         nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         builder = new NotificationCompat.Builder(this);
@@ -275,7 +263,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
                         remoteView.setOnClickPendingIntent(R.id.prev_imagebutton, pendingPreviousIntent);
                         remoteView.setOnClickPendingIntent(R.id.play_pause_imagebutton, pendingPlayIntent);
                         remoteView.setOnClickPendingIntent(R.id.next_imagebutton, pendingNextIntent);
-                    }else{
+                    } else {
                         try {
                             if (!url.isEmpty()) {
 
@@ -298,10 +286,8 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
             } else if (null != intent.getAction() && intent.getAction().equals(ACTION_PREV)) {
 
 
-
-
                 // update current track and play it
-                if (null != tracks && tracks.size() > 0 && (position-1) > -1 && null != tracks.get(--position)) {
+                if (null != tracks && tracks.size() > 0 && (position - 1) > -1 && null != tracks.get(--position)) {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
                         remoteView.setImageViewResource(R.id.play_pause_imagebutton, android.R.drawable.ic_media_play);
@@ -339,7 +325,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
             } else if (null != intent.getAction() && intent.getAction().equals(ACTION_NEXT)) {
 
 
-                if (null != tracks && tracks.size() > 0 && (position+1) < tracks.size() && null != tracks.get(++position)) {
+                if (null != tracks && tracks.size() > 0 && (position + 1) < tracks.size() && null != tracks.get(++position)) {
 
                     if (null != mediaPlayer && mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
@@ -353,7 +339,6 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
                         listener.nextClicked();
                         listener.getTrackNumber(position);
                     }
-                    //TODO make layout land
 
 
                 }
@@ -378,7 +363,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void playMedia(String url) {
         if (mediaPlayer.isPlaying())
-        mediaPlayer.stop();
+            mediaPlayer.stop();
         mediaPlayer.reset();
         try {
             if (!url.isEmpty())
@@ -407,7 +392,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         if (null != listener) {
             listener.getDuration(mediaPlayer.getDuration());
             listener.onMusicStarted();
-            listener.getCurrentState(tracks,tracks.indexOf(currentTrack),mediaPlayer.getCurrentPosition(),true,false,mediaPlayer.getDuration());
+            listener.getCurrentState(tracks, tracks.indexOf(currentTrack), mediaPlayer.getCurrentPosition(), true, false, mediaPlayer.getDuration());
         }
         remoteView.setImageViewResource(R.id.play_pause_imagebutton, android.R.drawable.ic_media_pause);
         remoteView.setTextViewText(R.id.track_name_textview, currentTrack.getTrackName());
@@ -450,6 +435,12 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         return false;
+    }
+
+    public interface MusicEndListener {
+        public void onMusicEnd();
+
+        public void onMusicStarted(String spotifyExternalURL);
     }
 
     public interface OnNotificationEventListener {

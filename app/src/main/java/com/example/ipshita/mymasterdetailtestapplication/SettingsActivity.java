@@ -28,39 +28,39 @@ public class SettingsActivity extends PreferenceActivity
         addPreferencesFromResource(R.xml.pref_country);
         ListPreference countryListPreference = (ListPreference) findPreference(getString(R.string.preference_country_key));
         lockscreenEnable = (TwoStatePreference) findPreference(getString(R.string.preference_lockscreen_key));
-        if (lockscreenEnable != null){
+        if (lockscreenEnable != null) {
 
             lockscreenEnable.setEnabled(true);
         }
-            //Update the operations like storing, updating UI etc... on pref change.
-            lockscreenEnable.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        //Update the operations like storing, updating UI etc... on pref change.
+        lockscreenEnable.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
-                @Override
-                public boolean onPreferenceChange(Preference arg0, Object isLockScreenEnabled) {
+            @Override
+            public boolean onPreferenceChange(Preference arg0, Object isLockScreenEnabled) {
 
-                    boolean isLockscreenControlON = ((Boolean) isLockScreenEnabled).booleanValue();
-
-
-                    SharedPreferences.Editor e = mPrefs.edit();
-                    e.putBoolean(getString(R.string.preference_lockscreen_key), isLockscreenControlON);
-                    e.commit();
-
-                    Intent intent = new Intent();
-                    intent.setAction(getString(R.string.action_lockscreen));
-
-                    sendBroadcast(intent);
+                boolean isLockscreenControlON = ((Boolean) isLockScreenEnabled).booleanValue();
 
 
-                    return true;
-                }
-            });
-        if (null != countryListPreference){
+                SharedPreferences.Editor e = mPrefs.edit();
+                e.putBoolean(getString(R.string.preference_lockscreen_key), isLockscreenControlON);
+                e.commit();
+
+                Intent intent = new Intent();
+                intent.setAction(getString(R.string.action_lockscreen));
+
+                sendBroadcast(intent);
+
+
+                return true;
+            }
+        });
+        if (null != countryListPreference) {
             // values is code
             // entries is country name
             countryListPreference.setEntryValues(Locale.getISOCountries());
             String[] entries = new String[countryListPreference.getEntryValues().length];
-            for(int i = 0 ; i < countryListPreference.getEntryValues().length ; i++){
-                entries[i] = new Locale("",Locale.getISOCountries()[i]).getDisplayCountry();
+            for (int i = 0; i < countryListPreference.getEntryValues().length; i++) {
+                entries[i] = new Locale("", Locale.getISOCountries()[i]).getDisplayCountry();
             }
             countryListPreference.setEntries(entries);
             countryListPreference.setDefaultValue(Locale.US);

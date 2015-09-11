@@ -71,7 +71,7 @@ public class ArtistListActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent) {
                 //do something based on the intent's action
-                if (intent.getAction().equals(getString(R.string.action_now_playing))){
+                if (intent.getAction().equals(getString(R.string.action_now_playing))) {
 
                     registerMusicListener(intent);
                 }
@@ -92,17 +92,8 @@ public class ArtistListActivity extends AppCompatActivity
             // activity should be in two-pane mode.
             mTwoPane = true;
 
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
-
-            // TODO this may not be required
-
-            /*((ArtistListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.artist_list))
-                    .setActivateOnItemClick(true);*/
         }
 
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     private void registerMusicListener(Intent intent) {
@@ -175,7 +166,6 @@ public class ArtistListActivity extends AppCompatActivity
 
     @Override
     public void onTrackCompleted() {
-        // TODO track completed when there is no dialog fragment
         nowPlayingMenuItem.setVisible(false);
         shareExternalURLItem.setVisible(false);
         dialog.dismiss();

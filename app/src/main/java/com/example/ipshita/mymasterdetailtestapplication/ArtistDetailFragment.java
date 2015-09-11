@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ipshita.mymasterdetailtestapplication.adapters.TopTracksAdapter;
-import com.example.ipshita.mymasterdetailtestapplication.dummy.DummyContent;
 import com.example.ipshita.mymasterdetailtestapplication.models.Artist;
 import com.example.ipshita.mymasterdetailtestapplication.models.Track;
 
@@ -56,10 +55,7 @@ public class ArtistDetailFragment extends Fragment {
      */
     public static final String ARTIST_ID = "artist_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.DummyItem mItem;
+
 
     private TopTrackCallback mTopTrackCallback = sDummyCallbacks;
 
@@ -109,13 +105,6 @@ public class ArtistDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       /* if (getArguments().containsKey(ARTIST_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            // TODO uncomment and fix it
-            //mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARTIST_ID));
-        }*/
 
         if (savedInstanceState == null || !savedInstanceState.containsKey(getString(R.string.top_track_parccel_key))) {
             // get artist name from previous intent
@@ -151,15 +140,7 @@ public class ArtistDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        /*View rootView = inflater.inflate(R.layout.fragment_artist_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            // TODO uncomment and change it for artist
-            ((TextView) rootView.findViewById(R.id.artist_detail)).setText(mItem.content);
-        }
-
-        return rootView;*/
 
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         trackList.clear();
@@ -176,14 +157,7 @@ public class ArtistDetailFragment extends Fragment {
         topTracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // get list of track name , album name, artist name, track image url, preview_url
 
-                // TODO send tracklist and track position
-                /*Intent musicPlayIntent = new Intent(getActivity(), MusicPlayAcitvity.class);
-
-                musicPlayIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), (ArrayList<? extends Parcelable>) trackList);
-                musicPlayIntent.putExtra(getString(R.string.track_position),position);
-                startActivity(musicPlayIntent);*/
                 mTopTrackCallback.onTopTrackSelected(trackList,position);
 
             }
@@ -209,7 +183,6 @@ public class ArtistDetailFragment extends Fragment {
                 options = new HashMap<>();
                 options.put(getString(R.string.spotify_country_param), getString(R.string.spotify_country_value));
                 try {
-                    // TODO get value from menu
                     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     String countryCode = sharedPrefs.getString(getString(R.string.preference_country_key), getString(R.string.pref_default_country));
                     spotifyTopTrackList = spotifyService.getArtistTopTrack(params[0], countryCode);

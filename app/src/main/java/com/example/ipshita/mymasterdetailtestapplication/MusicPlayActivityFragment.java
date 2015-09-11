@@ -33,6 +33,20 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
     private static final long SEEK_BAR_UPDATE_INTERVAL = 200;
     private static final int MILISECONDS_IN_ONE_SECOND = 1000;
     private static final int SECONDS_IN_ONE_MINUTE = 60;
+    private static MusicStartListener dummyListener = new MusicStartListener() {
+        @Override
+        public void onTrackCompleted() {
+
+        }
+
+        @Override
+        public void onTrackStarted(String spotifyExternalURL) {
+
+        }
+
+
+    };
+    private static MusicStartListener musicCompletedListener = dummyListener;
     public List<Track> trackList;
     public int currentTrackPosition;
     TextView artistNameTextView;
@@ -48,13 +62,6 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
     private int trackDuration = 0;
     private View rootView;
     private boolean isServiceOn = false;
-        private int currentTimeTrackPosition;
-
-    public MusicPlayActivityFragment() {
-
-        MusicPlayerService.registerOnNotificationEventListener(this);
-
-    }
 /*    public interface iMusicPlayDialogListener{
         public void onTrackCompleted();
         public void onTrackStarted(String spotifyExternalURL);
@@ -75,23 +82,13 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
     };
 
     private iMusicPlayDialogListener musicCompletedListener = dummyListener;*/
+    private int currentTimeTrackPosition;
 
+    public MusicPlayActivityFragment() {
 
-    private static MusicStartListener dummyListener = new MusicStartListener() {
-        @Override
-        public void onTrackCompleted() {
+        MusicPlayerService.registerOnNotificationEventListener(this);
 
-        }
-
-        @Override
-        public void onTrackStarted(String spotifyExternalURL) {
-
-        }
-
-
-    };
-
-    private static MusicStartListener musicCompletedListener = dummyListener;
+    }
    /* @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -106,11 +103,11 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         musicCompletedListener = dummyListener;
     }*/
 
-    public static void registerMusicStartListener(MusicStartListener listener){
+    public static void registerMusicStartListener(MusicStartListener listener) {
         musicCompletedListener = listener;
     }
 
-    public static void unregisterMusicStartListener(){
+    public static void unregisterMusicStartListener() {
         musicCompletedListener = dummyListener;
     }
 
@@ -125,22 +122,23 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         // total duration
         outState.putBoolean(getString(R.string.is_playing_key), isPlaying);
         outState.putInt(getString(R.string.seekbar_progress_position), trackTimePosition);
-        outState.putInt(getString(R.string.track_duration),trackDuration);
+        outState.putInt(getString(R.string.track_duration), trackDuration);
 
         super.onSaveInstanceState(outState);
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-            Intent startServiceIntent = new Intent(getActivity(), MusicPlayerService.class);
-            // pass the entire top track list and position
-            startServiceIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), (ArrayList<? extends Parcelable>) trackList);
-            startServiceIntent.putExtra(getString(R.string.track_position), currentTrackPosition);
-            // set action play
+        Intent startServiceIntent = new Intent(getActivity(), MusicPlayerService.class);
+        // pass the entire top track list and position
+        startServiceIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), (ArrayList<? extends Parcelable>) trackList);
+        startServiceIntent.putExtra(getString(R.string.track_position), currentTrackPosition);
+        // set action play
         startServiceIntent.setAction(MusicPlayerService.ACTION_FRAGMENT_RESUMED);
 
-            getActivity().startService(startServiceIntent);
+        getActivity().startService(startServiceIntent);
 
 
     }
@@ -157,7 +155,6 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         trackNameTextView = (TextView) rootView.findViewById(R.id.track_name_textview);
 
         albumThumbnailImageView = (ImageView) rootView.findViewById(R.id.album_thumbnail_imageview);
-
 
 
         elapsedTimeTextView = (TextView) rootView.findViewById(R.id.elapsed_time_textview);
@@ -355,7 +352,7 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
         int seconds = durationInSeconds % SECONDS_IN_ONE_MINUTE;
         if (isAdded()) {
             return String.valueOf(minutes) + getString(R.string.colon) + String.valueOf(seconds);
-        }else
+        } else
             return "";
     }
 
@@ -399,8 +396,6 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
     public void onMusicResumed() {
         isPlaying = true;
     }
-
-
 
 
     @Override
@@ -461,7 +456,6 @@ public class MusicPlayActivityFragment extends Fragment implements MusicPlayerSe
     public class UpdateSeekBarTask extends AsyncTask<Void, Void, Void> {
 
         // start music player Service
-
 
 
         @Override

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ipshita.mymasterdetailtestapplication" >
+    package="com.example.ipshita.mymasterdetailtestapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ArtistListActivity"
 
@@ -24,10 +25,10 @@
         </activity>
         <activity
             android:name=".ArtistDetailActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_artist_detail"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".ArtistListActivity" >
+            android:parentActivityName=".ArtistListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ArtistListActivity" />
@@ -35,12 +36,12 @@
         <activity
             android:name=".MusicPlayAcitvity"
             android:label="@string/title_activity_music_play_acitvity"
-            android:parentActivityName=".ArtistDetailActivity" >
+            android:parentActivityName=".ArtistDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ipshita.mymasterdetailtestapplication.ArtistDetailActivity" />
         </activity>
-        <activity android:name=".SettingsActivity"/>
+        <activity android:name=".SettingsActivity" />
 
         <service
             android:name=".MusicPlayerService"

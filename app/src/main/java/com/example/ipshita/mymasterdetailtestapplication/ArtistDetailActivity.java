@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link ArtistDetailFragment}.
  */
-public class ArtistDetailActivity extends AppCompatActivity implements ArtistDetailFragment.TopTrackCallback{
+public class ArtistDetailActivity extends AppCompatActivity implements ArtistDetailFragment.TopTrackCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class ArtistDetailActivity extends AppCompatActivity implements ArtistDet
         Intent intent = getIntent();
         ActionBar ab = getSupportActionBar();
         Artist currentArtist = intent.getParcelableExtra(ArtistDetailFragment.ARTIST_ID);
-        if(currentArtist != null){
+        if (currentArtist != null) {
             ab.setTitle(getString(R.string.top_tracks_title));
             ab.setSubtitle(currentArtist.getArtistName());
 
@@ -83,7 +83,7 @@ public class ArtistDetailActivity extends AppCompatActivity implements ArtistDet
     public void onTopTrackSelected(ArrayList<Track> trackList, int trackPosition) {
         Intent detailIntent = new Intent(this, MusicPlayAcitvity.class);
         detailIntent.putParcelableArrayListExtra(getString(R.string.tracklist_key), trackList);
-        detailIntent.putExtra(getString(R.string.track_position),trackPosition);
+        detailIntent.putExtra(getString(R.string.track_position), trackPosition);
         startActivity(detailIntent);
     }
 }

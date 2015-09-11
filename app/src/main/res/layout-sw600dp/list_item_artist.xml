@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/single_line_list_item_tile_height"
+    android:orientation="horizontal"
     android:padding="8dp">
 
     <ImageView
+        android:id="@+id/list_item_artist_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_artist_image_view"
         android:paddingLeft="@dimen/single_line_list_item_left_icon_padding" />
 
     <TextView
+        android:id="@+id/list_item_name_textview"
+        style="@style/single_line_list_item_text_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_name_textview"
-        android:layout_weight="1"
-        style="@style/single_line_list_item_text_style" />
+        android:layout_weight="1" />
 </LinearLayout>
